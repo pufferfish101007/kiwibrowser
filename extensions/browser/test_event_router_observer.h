@@ -10,6 +10,7 @@
 #include <string>
 
 #include "base/memory/raw_ptr.h"
+#include "base/run_loop.h"
 #include "extensions/browser/event_router.h"
 
 namespace extensions {
@@ -31,14 +32,18 @@ class TestEventRouterObserver : public EventRouter::TestObserver {
   const EventMap& events() const { return events_; }
   const EventMap& dispatched_events() const { return dispatched_events_; }
 
+  // Waits until `events()` contains an event with `name`.
+  void WaitForEventWithName(const std::string& name);
+
  private:
   // EventRouter::TestObserver:
   void OnWillDispatchEvent(const Event& event) override;
-  void OnDidDispatchEventToProcess(const Event& event) override;
+  void OnDidDispatchEventToProcess(const Event& event, int process_id) override;
 
   EventMap events_;
   EventMap dispatched_events_;
   raw_ptr<EventRouter> event_router_;
+  std::unique_ptr<base::RunLoop> run_loop_;
 };
 
 }  // namespace extensions

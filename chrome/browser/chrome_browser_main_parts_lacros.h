@@ -11,6 +11,7 @@
 
 class MetricsReportingObserver;
 class PrefsAshObserver;
+class Profile;
 
 // Startup and shutdown code for Lacros. See ChromeBrowserMainParts for details.
 class ChromeBrowserMainPartsLacros : public ChromeBrowserMainPartsLinux {
@@ -25,8 +26,9 @@ class ChromeBrowserMainPartsLacros : public ChromeBrowserMainPartsLinux {
   // ChromeBrowserMainParts:
   int PreEarlyInitialization() override;
   int PreCreateThreads() override;
-  void PostCreateThreads() override;
   void PreProfileInit() override;
+  void PostProfileInit(Profile* profile, bool is_initial_profile) override;
+  void PostMainMessageLoopRun() override;
   void PostDestroyThreads() override;
 
  private:

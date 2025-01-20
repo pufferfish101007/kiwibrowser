@@ -15,10 +15,10 @@
 #include "base/check.h"
 #include "base/containers/circular_deque.h"
 #include "base/containers/contains.h"
-#include "base/cxx17_backports.h"
 #include "base/lazy_instance.h"
 #include "base/notreached.h"
 #include "base/rand_util.h"
+#include "base/ranges/algorithm.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_split.h"
 #include "base/strings/string_util.h"
@@ -170,23 +170,18 @@ void CreatePassport(const std::string& domain,
       base::WriteInto(&hmac, kHMACSizeInBytes + 1));
   if (!engine->Sign(blob, hmac_data, kHMACSizeInBytes)) {
     NOTREACHED();
-    return;
   }
-  std::string hmac_base64;
-  base::Base64Encode(hmac, &hmac_base64);
+  std::string hmac_base64 = base::Base64Encode(hmac);
   if (hmac_base64.size() != BASE64_PER_RAW(kHMACSizeInBytes)) {
     NOTREACHED();
-    return;
   }
   DCHECK(hmac_base64.size() < result.size());
-  std::copy(hmac_base64.begin(), hmac_base64.end(), result.begin());
+  base::ranges::copy(hmac_base64, result.begin());
 
   std::string tick_decimal = base::NumberToString(tick);
   DCHECK(tick_decimal.size() <= kTickStringLength);
-  std::copy(
-      tick_decimal.begin(),
-      tick_decimal.end(),
-      result.begin() + kPassportSize - tick_decimal.size());
+  base::ranges::copy(tick_decimal,
+                     result.begin() + kPassportSize - tick_decimal.size());
 
   out->swap(result);
 }
@@ -356,7 +351,6 @@ class InternalAuthGenerationService : public base::ThreadChecker {
     DCHECK(CalledOnValidThread());
     if (engine_ == nullptr) {
       NOTREACHED();
-      return 0;
     }
     if (!IsDomainSane(domain))
       return 0;
@@ -392,7 +386,6 @@ class InternalAuthGenerationService : public base::ThreadChecker {
       }
     }
     NOTREACHED();
-    return 0;
   }
 
   std::string GeneratePassport(const std::string& domain,
@@ -453,7 +446,7 @@ int InternalAuthVerification::get_verification_window_ticks() {
   if (verification_window_seconds_ > 0)
     candidate = verification_window_seconds_ *
         base::Time::kMicrosecondsPerSecond / kTickUs;
-  return base::clamp(candidate, 1, kVerificationWindowTicks);
+  return std::clamp(candidate, 1, kVerificationWindowTicks);
 }
 
 int InternalAuthVerification::verification_window_seconds_ = 0;
