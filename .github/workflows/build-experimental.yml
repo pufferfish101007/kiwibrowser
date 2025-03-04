@@ -16,9 +16,6 @@ jobs:
           remove-haskell: true
           remove-codeql: true
           remove-docker-images: true
-          
-      - name: Check disk space
-        run: df -h
 
       - name: Clone depot_tools
         run: git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
@@ -29,4 +26,4 @@ jobs:
       - name: Clone chromium repo
         run: |
           mkdir ~/chromium && cd ~/chromium
-          git fetch --nohooks --nohistory android
+          fetch --nohooks --nohistory android
