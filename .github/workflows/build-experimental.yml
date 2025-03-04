@@ -22,15 +22,18 @@ jobs:
           git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
           pwd
           ls -a
+          echo
+          echo cd depot_tools
+          echo
           cd depot_tools
           ls -a
           cd -
 
       - name: Add depot_tools to path
-        run: export PATH="$PATH:${PWD}/depot_tools"
+        run: export PATH="${PWD}/depot_tools:$PATH"
 
       - name: Clone chromium repo
         run: |
           mkdir ~/chromium && cd ~/chromium
-          ../depot_tools/fetch --nohooks --nohistory android
+          fetch --nohooks --nohistory android
           cd src
