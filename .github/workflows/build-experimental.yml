@@ -24,6 +24,9 @@ jobs:
       - name: Add depot_tools to path
         run: echo "${GITHUB_WORKSPACE}/depot_tools" >> "$GITHUB_PATH"
 
+      - name: where python?
+        run: where python
+
       - name: Clone chromium repo
         run: |
           mkdir ~/chromium && cd ~/chromium
