@@ -20,17 +20,9 @@ jobs:
       - name: Clone depot_tools
         run: |
           git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
-          pwd
-          ls -a
-          echo
-          echo cd depot_tools
-          echo
-          cd depot_tools
-          ls -a
-          cd -
 
       - name: Add depot_tools to path
-        run: export PATH="${PWD}/depot_tools:$PATH"
+        run: echo "${GITHUB_WORKSPACE}/depot_tools" >> "$GITHUB_PATH"
 
       - name: Clone chromium repo
         run: |
